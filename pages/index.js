@@ -19,11 +19,37 @@ function ProfileSidebar(propriedades) {
     </Box>
   )
 }
+
+function ProfileRelationsBox(propriedades) {
+  return (<ProfileRelationsBoxWrapper>
+
+    <h2 className="smallTitle">
+     {propriedades.title}({propriedades.items.length})
+
+    </h2>
+
+    <ul>
+      {/* {comunidades.map((itemAtual) => {
+          return (
+            <li key={itemAtual.id}>
+              <a href={`/users/${itemAtual.title}`} >
+                <img src={itemAtual.image} />
+                <span>{itemAtual.title}</span>
+              </a>
+            </li>
+          )
+        })} */}
+    </ul>
+
+
+  </ProfileRelationsBoxWrapper>)
+}
+
 export default function Home() {
   const [comunidades, setComunidades] = React.useState([{
-      id: '12122121',
-      title: 'Eu odeio acordar cedo',
-      image: 'https://alurakut.vercel.app/capa-comunidade-01.jpg'
+    id: '12122121',
+    title: 'Eu odeio acordar cedo',
+    image: 'https://alurakut.vercel.app/capa-comunidade-01.jpg'
   }]);
   // const comunidades =['Alurakut']
   const userA = 'gabriel-elesbao'
@@ -33,6 +59,22 @@ export default function Home() {
     'marcobrunodev',
     'juunegreiros',
   ]
+
+  // 0 pegar o array de dados do git
+
+
+const [seguidores, setSeguidores] = React.useState([]);
+  
+  React.useEffect(function(){
+    fetch('https://api.github.com/users/peas/followers')
+    .then(function (respostasDoServidor) {
+      return respostasDoServidor.json();
+    })
+    .then(function (respostaCompleta) {
+      setSeguidores(respostaCompleta);
+    })
+    }, [])
+
 
   return (
     <>
@@ -51,39 +93,37 @@ export default function Home() {
 
           <Box>
             <h2 className="subTitle">O que você deseja fazer?</h2>
-            <form onSubmit={function handleCreateComunnity(e){
-                e.preventDefault();
-                const dadosForm = new FormData(e.target);
+            <form onSubmit={function handleCreateComunnity(e) {
+              e.preventDefault();
+              const dadosForm = new FormData(e.target);
 
-                const comunidade ={
-                  id: new Date().toISOString(),
-                  title: dadosForm.get('title'),
-                  image: dadosForm.get('image'), 
+              const comunidade = {
+                id: new Date().toISOString(),
+                title: dadosForm.get('title'),
+                image: dadosForm.get('image'),
 
-                }
-                const comunidadesAtualizadas = [...comunidades, comunidade];
-                setComunidades(comunidadesAtualizadas)
-
-
+              }
+              const comunidadesAtualizadas = [...comunidades, comunidade];
+              setComunidades(comunidadesAtualizadas)
             }}>
 
               <div>
 
-              <input
-                placeholder="Qual vai ser o nome da sua comunidade?"
-                name="title"
-                aria-label="" 
-                type="text"
+                <input
+                  placeholder="Qual vai ser o nome da sua comunidade?"
+                  name="title"
+                  aria-label=""
+                  type="text"
                 />
               </div>
 
-              
+
               <div>
 
-              <input
-                placeholder="Coloque uma url para usarmos de capa"
-                name="image"
-                aria-label="" 
+                <input
+                  placeholder="Coloque uma url para usarmos de capa"
+                  name="image"
+                  aria-label=""
                 />
               </div>
               <button>
@@ -94,22 +134,8 @@ export default function Home() {
         </div>
 
         <div className="profileRelationsArea" style={{ gridArea: 'profileRelationsArea' }}>
-          <ProfileRelationsBoxWrapper>
-              <ul>
-                  {comunidades.map((itemAtual) => {
-                    return (
-                      <li key={itemAtual.id}>
-                        <a href={`/users/${itemAtual.title}`} >
-                          <img src={itemAtual.image} />
-                          <span>{itemAtual.title}</span>
-                        </a>
-                      </li>
-                    )
-                  })}
-                </ul>
+          <ProfileRelationsBox title="Seguidores" items={seguidores} />
 
-            
-          </ProfileRelationsBoxWrapper>
           <ProfileRelationsBoxWrapper >
             <h2 className="smallTitle">
               Pessoas ({favoritePersons.length})
